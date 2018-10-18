@@ -1,20 +1,20 @@
 ﻿# Требования к проекту
 ## Содержание
 
- 1. [Введение](#introduction)
-	 1.1. [Назначение](#purpose)
-	 1.2. [Бизнес-требования](#business_reqs)
-	 1.3. [Аналоги](#analogs)
- 2. [Требования пользователя](#user_requirements)
-	 2.1. [Программные интерфейсы](#program_interfaces)
-	 2.2. [Интерфейс пользователя](#user_interface)
-	 2.3. [Характеристики пользователей](#user_characteristics)
-		 2.3.1. [Классы пользователей](#user_classes)
-		 2.3.2. [Аудитория приложения](#app_audience)
-	 2.4. [Предположения и зависимости](#assumptions&dependencies)
- 3. [Системные требования](#system_requirements)
-	 3.1. [Функциональные требования](#functional_requirements)
-	 3.2. [Нефункциональные требования](#functional_requirements)
+ 1. [Введение](#introduction)  
+	 1.1. [Назначение](#purpose)  
+	 1.2. [Бизнес-требования](#business_reqs)  
+	 1.3. [Аналоги](#analogs)  
+ 2. [Требования пользователя](#user_requirements)  
+	 2.1. [Программные интерфейсы](#program_interfaces)  
+	 2.2. [Интерфейс пользователя](#user_interface)  
+	 2.3. [Характеристики пользователей](#user_characteristics)  
+		 2.3.1. [Классы пользователей](#user_classes)  
+		 2.3.2. [Аудитория приложения](#app_audience)  
+	 2.4. [Предположения и зависимости](#assumptions&dependencies)  
+ 3. [Системные требования](#system_requirements)  
+	 3.1. [Функциональные требования](#functional_requirements)  
+	 3.2. [Нефункциональные требования](#functional_requirements)  
 
 ## 1. Введение <a name="introduction"></a>
 ### 1.1. Назначение <a name="purpose"></a>
@@ -36,23 +36,23 @@
  - Windows API - реализация шифровки\дешифровки данных.
 
 ### 2.2. Интерфейс пользователя <a name="user_interface"></a>
-Главное (стартовое) окно
+Главное (стартовое) окно  
 ![main_window](https://github.com/Egor-Ananko-650503/CManager/blob/master/docs/images/mockups/Main%20Window.png?raw=true)
 При нажатии правой клавиши мыши по существующему файлу или директории появится контекстное меню.
 
-Контекстное меню
+Контекстное меню  
 ![context_menu](https://github.com/Egor-Ananko-650503/CManager/blob/master/docs/images/mockups/Context%20menu.png?raw=true)
 При выборе действия, модифицирующего файл или директорию (в том числе удаление), появляется окно подтверждения действия.
 
-Окно подтверждения
+Окно подтверждения  
 ![confirm_window](https://github.com/Egor-Ananko-650503/CManager/blob/master/docs/images/mockups/Confirm%20window.png?raw=true)
 Если у пользователя нету необходимых прав доступа для совершения действия, то появляется окно с сообщением об отказе доступа.
 
-Окно отказа доступа
+Окно отказа доступа  
 ![access_is_denied](https://github.com/Egor-Ananko-650503/CManager/blob/master/docs/images/mockups/Access%20is%20denied.png?raw=true)
 При нажатии на клавишу с символом "▼" выпадает список с историей открытых ранее директорий. При нажатии на строку истории происходит переход по содержащемуся в строке пути.
 
-История посещений
+История посещений  
 ![history](https://github.com/Egor-Ananko-650503/CManager/blob/master/docs/images/mockups/History.png?raw=true)
 ### 2.3. Характеристики пользователей  <a name="user_characteristics"></a>
 #### 2.3.1. Классы пользователей <a name="user_classes"></a>
