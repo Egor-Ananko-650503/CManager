@@ -37,23 +37,23 @@
 
 ### 2.2. <a name="user_interface"></a> Интерфейс пользователя  
 Главное (стартовое) окно  
-![main_window](https://github.com/Egor-Ananko-650503/CManager/blob/master/docs/images/mockups/Main%20Window.png?raw=true)
+![main_window](https://github.com/Egor-Ananko-650503/CManager/blob/master/docs/images/mockups/Main%20Window.png?raw=true)  
 При нажатии правой клавиши мыши по существующему файлу или директории появится контекстное меню.
 
 Контекстное меню  
-![context_menu](https://github.com/Egor-Ananko-650503/CManager/blob/master/docs/images/mockups/Context%20menu.png?raw=true)
+![context_menu](https://github.com/Egor-Ananko-650503/CManager/blob/master/docs/images/mockups/Context%20menu.png?raw=true)  
 При выборе действия, модифицирующего файл или директорию (в том числе удаление), появляется окно подтверждения действия.
 
 Окно подтверждения  
-![confirm_window](https://github.com/Egor-Ananko-650503/CManager/blob/master/docs/images/mockups/Confirm%20window.png?raw=true)
+![confirm_window](https://github.com/Egor-Ananko-650503/CManager/blob/master/docs/images/mockups/Confirm%20window.png?raw=true)  
 Если у пользователя нету необходимых прав доступа для совершения действия, то появляется окно с сообщением об отказе доступа.
 
 Окно отказа доступа  
-![access_is_denied](https://github.com/Egor-Ananko-650503/CManager/blob/master/docs/images/mockups/Access%20is%20denied.png?raw=true)
+![access_is_denied](https://github.com/Egor-Ananko-650503/CManager/blob/master/docs/images/mockups/Access%20is%20denied.png?raw=true)  
 При нажатии на клавишу с символом "▼" выпадает список с историей открытых ранее директорий. При нажатии на строку истории происходит переход по содержащемуся в строке пути.
 
 История посещений  
-![history](https://github.com/Egor-Ananko-650503/CManager/blob/master/docs/images/mockups/History.png?raw=true)
+![history](https://github.com/Egor-Ananko-650503/CManager/blob/master/docs/images/mockups/History.png?raw=true)  
 ### 2.3. <a name="user_characteristics"></a> Характеристики пользователей  
 #### 2.3.1. <a name="user_classes"></a> Классы пользователей  
 | Класс пользователя | Описание |
@@ -67,11 +67,12 @@
 | Возрастная категория | Подростковая и старше |
 | Уровень образования | Общее и выше |
 | Опыт | Работа с файловой системой |
-| Техническая грамотность | Понимание принципов защиты информации |
+| Техническая грамотность | Понимание принципов защиты информации |  
+
 Данное приложение будет полезным для:
  -  людей, использующих компьютер дома;
  - офисных работников;
- - людей, часто работающих с важными файлами.
+ - людей, часто работающих с важными файлами.  
 ### 2.4. <a name="assumptions&dependencies"></a> Предположения и зависимости  
 
  - Файлы операционной системы не могут быть зашифрованы пользователем
@@ -102,7 +103,7 @@
 #### 3.1.3. Другие возможности
 
  - Выполнение команды в системном интерпретаторе относительно текущей директории;
- - Вернуться в корневой каталог текущего физического диска.
+ - Возможность вернуться в корневой каталог текущего физического диска.
 
 ### 3.2. <a name="non-functional_requirements"></a> Нефункциональные требования  
 
