@@ -4,4 +4,4 @@
 3. [Диаграмма классов](https://github.com/Egor-Ananko-650503/CManager/blob/master/docs/system%20design/class/ClassDiagram.md)
 4. [Диаграмма последовательности](https://github.com/Egor-Ananko-650503/CManager/blob/master/docs/system%20design/sequence/SequenceDiagram.md)
 5. [Диаграмма состояний](https://github.com/Egor-Ananko-650503/CManager/blob/master/docs/system%20design/state/StateDiagrams.md)
-6. [Диаграмма компонентов]() 
+6. [Диаграмма компонентов](https://github.com/Egor-Ananko-650503/CManager/blob/master/docs/system%20design/component/ComponentDiagram.md) 
