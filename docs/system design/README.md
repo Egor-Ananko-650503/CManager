@@ -1,7 +1,7 @@
 # Проектирование системы (UML)
 1. [Диаграмма вариантов использования](https://github.com/Egor-Ananko-650503/CManager/blob/master/docs/system%20design/usecase/FlowOfEvents.md)
 2. [Диаграмма активности](https://github.com/Egor-Ananko-650503/CManager/blob/master/docs/system%20design/activity/ActivityDiagrams.md)
-3. [Диаграмма классов]()
+3. [Диаграмма классов](https://github.com/Egor-Ananko-650503/CManager/blob/master/docs/system%20design/class/ClassDiagram.md)
 4. [Диаграмма последовательности]()
 5. [Диаграмма состояний](https://github.com/Egor-Ananko-650503/CManager/blob/master/docs/system%20design/state/StateDiagrams.md)
 6. [Диаграмма развёртывания]()
