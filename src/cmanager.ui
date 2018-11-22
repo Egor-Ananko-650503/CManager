@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>CManager</class>
+ <widget class="QMainWindow" name="CManager">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>1024</width>
+    <height>768</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>CManager</string>
+  </property>
+  <widget class="QWidget" name="centralWidget">
+   <layout class="QVBoxLayout" name="verticalLayout">
+    <item>
+     <layout class="QHBoxLayout" name="CMPanelHBox"/>
+    </item>
+    <item>
+     <layout class="QHBoxLayout" name="cmdHBox">
+      <item>
+       <spacer name="cmdSpacer">
+        <property name="orientation">
+         <enum>Qt::Horizontal</enum>
+        </property>
+        <property name="sizeHint" stdset="0">
+         <size>
+          <width>40</width>
+          <height>20</height>
+         </size>
+        </property>
+       </spacer>
+      </item>
+      <item>
+       <widget class="QLabel" name="cmdPatLabel">
+        <property name="text">
+         <string>cmd path</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QLineEdit" name="cmdComandLineEdit"/>
+      </item>
+     </layout>
+    </item>
+   </layout>
+  </widget>
+  <widget class="QMenuBar" name="menuBar">
+   <property name="geometry">
+    <rect>
+     <x>0</x>
+     <y>0</y>
+     <width>1024</width>
+     <height>21</height>
+    </rect>
+   </property>
+   <widget class="QMenu" name="File">
+    <property name="title">
+     <string>Файл</string>
+    </property>
+   </widget>
+   <widget class="QMenu" name="Edit">
+    <property name="title">
+     <string>Редактировать</string>
+    </property>
+   </widget>
+   <widget class="QMenu" name="View">
+    <property name="title">
+     <string>Вид</string>
+    </property>
+   </widget>
+   <widget class="QMenu" name="Halp">
+    <property name="title">
+     <string>Помощь</string>
+    </property>
+   </widget>
+   <addaction name="File"/>
+   <addaction name="Edit"/>
+   <addaction name="View"/>
+   <addaction name="Halp"/>
+  </widget>
+  <widget class="QToolBar" name="mainToolBar">
+   <attribute name="toolBarArea">
+    <enum>TopToolBarArea</enum>
+   </attribute>
+   <attribute name="toolBarBreak">
+    <bool>true</bool>
+   </attribute>
+  </widget>
+  <widget class="QStatusBar" name="statusBar"/>
+ </widget>
+ <layoutdefault spacing="6" margin="11"/>
+ <resources/>
+ <connections/>
+</ui>
