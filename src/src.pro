@@ -29,21 +29,35 @@ LIBS += -"LC:/Program Files/boost/boost_1_67_0/boost_mingw_53_32/lib" \
 #        -llibboost_system-mgw53-mt-d-x32-1_67 \
         -llibboost_filesystem-mgw53-mt-x32-1_67 \
 #        -llibboost_filesystem-mgw53-mt-d-x32-1_67 \
+        -llibboost_date_time-mgw53-mt-x32-1_67 \
+#        -llibboost_date_time-mgw53-mt-d-x32-1_67
+
+INCLUDEPATH += d:\Projects\Qt\3TPO\AnManager
+LIBS += d:\Projects\Qt\3TPO\AnManager\pathcch.lib
 
 CONFIG += c++17
 
 SOURCES += \
         main.cpp \
         cmanager.cpp \
-    cmanagerpanel.cpp
+    disklistener.cpp \
+    diskbutton.cpp \
+    managerpanel.cpp \
+    filemodel.cpp \
+    junctionpoint.cpp
 
 HEADERS += \
         cmanager.h \
-    cmanagerpanel.h
+    disklistener.h \
+    diskbutton.h \
+    managerpanel.h \
+    filemodel.h \
+    junctionpoint.h \
+    internal.h
 
 FORMS += \
         cmanager.ui \
-    cmanagerpanel.ui
+    managerpanel.ui
 
 # Default rules for deployment.
 qnx: target.path = /tmp/$${TARGET}/bin

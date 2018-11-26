@@ -2,7 +2,10 @@
 #define CMANAGER_H
 
 #include <QMainWindow>
-#include "cmanagerpanel.h"
+#include <QDebug>
+#include <QtConcurrent/QtConcurrentRun>
+#include <disklistener.h>
+#include "managerpanel.h"
 
 namespace Ui {
 class CManager;
@@ -20,12 +23,18 @@ public:
 private:
 
     Ui::CManager *ui;
-    CManagerPanel *leftPanel;
-    CManagerPanel *rightPanel;
+    ManagerPanel *leftPanel;
+    ManagerPanel *rightPanel;
+    DiskListener *diskListener;
 
     void configurePanel();
+    void runDiskListener();
+
+signals:
 
 private slots:
+
+    void slotDiskMaskChanged(unsigned long);
 };
 
 #endif // CMANAGER_H
