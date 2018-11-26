@@ -20,7 +20,7 @@ public:
 
 private:
 
-    DWORD oldMask = 0;
+    unsigned long oldMask = 0;
 
 signals:
 

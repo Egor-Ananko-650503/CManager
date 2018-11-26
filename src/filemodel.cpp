@@ -18,12 +18,6 @@ int FileModel::columnCount(const QModelIndex &parent) const
 
 QVariant FileModel::data(const QModelIndex &index, int role) const
 {
-// if (role == Qt::BackgroundRole) {
-// if (index.row() % 2)
-// return QBrush(QColor(242, 242, 242));
-// return QBrush(QColor(Qt::white));
-// }
-
     error_code ec;
 
     if (!index.isValid()

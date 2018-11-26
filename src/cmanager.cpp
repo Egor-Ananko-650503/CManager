@@ -28,7 +28,6 @@ void CManager::configurePanel()
     ui->CMPanelHBox->addWidget(this->rightPanel);
 }
 
-//
 void CManager::runDiskListener()
 {
     diskListener = new DiskListener;

@@ -44,7 +44,8 @@ SOURCES += \
     diskbutton.cpp \
     managerpanel.cpp \
     filemodel.cpp \
-    junctionpoint.cpp
+    junctionpoint.cpp \
+    managerpanelcontroller.cpp
 
 HEADERS += \
         cmanager.h \
@@ -53,7 +54,8 @@ HEADERS += \
     managerpanel.h \
     filemodel.h \
     junctionpoint.h \
-    internal.h
+    internal.h \
+    managerpanelcontroller.h
 
 FORMS += \
         cmanager.ui \

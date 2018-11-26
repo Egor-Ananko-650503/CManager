@@ -4,8 +4,6 @@
 #include <QAbstractTableModel>
 #include <QVariant>
 #include <QDebug>
-#include <QBrush>
-#include <QColor>
 
 #include <boost/filesystem.hpp>
 #include <boost/date_time.hpp>
