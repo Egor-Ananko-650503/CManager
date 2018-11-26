@@ -16,6 +16,7 @@ public:
     bool fExit = false;
 
     void listenDiskMask();
+    void close();
 
 private:
 

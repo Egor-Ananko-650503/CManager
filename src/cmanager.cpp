@@ -13,7 +13,7 @@ CManager::CManager(QWidget *parent) :
 
 CManager::~CManager()
 {
-    diskListener->fExit = true;
+    diskListener->close();
     delete ui;
     delete leftPanel;
     delete rightPanel;
@@ -34,18 +34,15 @@ void CManager::runDiskListener()
     diskListener = new DiskListener;
     connect(diskListener, &DiskListener::diskMaskChanged,
             this, &CManager::slotDiskMaskChanged);
+
     QtConcurrent::run([=](){
-        while (!diskListener->fExit)
-        {
-            diskListener->listenDiskMask();
-            QThread::sleep(3);
-        }
+        diskListener->listenDiskMask();
     });
 }
 
 void CManager::slotDiskMaskChanged(unsigned long disks)
 {
-    qDebug() << disks;
+    qDebug() << disks; // DEBUG
     leftPanel->setDisks(disks);
     rightPanel->setDisks(disks);
 }

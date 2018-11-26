@@ -6,9 +6,18 @@ DiskListener::DiskListener(QObject *parent) : QObject(parent)
 
 void DiskListener::listenDiskMask()
 {
-    DWORD newMask = GetLogicalDrives();
-    if (oldMask != newMask) {
-        oldMask = newMask;
-        emit diskMaskChanged(newMask);
+    while (!fExit) {
+        DWORD newMask = GetLogicalDrives();
+        if (oldMask != newMask) {
+            oldMask = newMask;
+            emit diskMaskChanged(newMask);
+        }
+
+        QThread::sleep(3);
     }
+}
+
+void DiskListener::close()
+{
+    fExit = true;
 }
