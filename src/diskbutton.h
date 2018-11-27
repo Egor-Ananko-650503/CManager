@@ -11,18 +11,17 @@ class DiskButton : public QPushButton
 {
     Q_OBJECT
 public:
-    path diskPath;
-
     DiskButton(const path &path, QWidget *parent = nullptr);
     DiskButton(const path &path, const QString &text, QWidget *parent = nullptr);
     DiskButton(const path &path, const QIcon &icon, const QString &text, QWidget *parent = nullptr);
     DiskButton(const path &path, QPushButtonPrivate &dd, QWidget *parent = nullptr);
     ~DiskButton();
 
-    void setPath(const path &path);
+    path diskPath;
+    QString diskLabel = nullptr;
 
 signals:
-    void diskClicked(const path &path);
+    void diskClicked(const path &path, const QString &label);
 
 public slots:
     void resendingSignal();

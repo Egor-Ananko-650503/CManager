@@ -1,4 +1,4 @@
-#include "DiskButton.h"
+#include "diskbutton.h"
 
 DiskButton::DiskButton(const path &path, QWidget *parent) : QPushButton(parent)
 {
@@ -35,12 +35,7 @@ DiskButton::~DiskButton()
 {
 }
 
-void DiskButton::setPath(const path &path)
-{
-    this->diskPath = path;
-}
-
 void DiskButton::resendingSignal()
 {
-    emit diskClicked(diskPath);
+    emit diskClicked(diskPath, diskLabel);
 }

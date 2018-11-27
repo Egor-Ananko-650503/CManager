@@ -4,6 +4,7 @@
 #include <QAbstractTableModel>
 #include <QVariant>
 #include <QDebug>
+#include <QRegularExpression>
 
 #include <boost/filesystem.hpp>
 #include <boost/date_time.hpp>
@@ -34,7 +35,11 @@ public:
     int columnCount(const QModelIndex &parent) const;
     QVariant data(const QModelIndex &index, int role) const;
     QVariant headerData(int section, Qt::Orientation orientation, int role) const;
-    void reserModel(Files &files);
+    void resetModel(Files &files);
+
+    int contentCount();
+    path getContent(int index);
+    QString formatSizeByThousands(QString original) const;
 
 private:
 

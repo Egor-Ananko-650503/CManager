@@ -2,6 +2,8 @@
 #define MANAGERPANEL_H
 
 #include <QWidget>
+#include <QTableView>
+#include <QScrollBar>
 #include <QDebug>
 
 #include <windows.h>
@@ -27,14 +29,15 @@ public:
 private:
     Ui::ManagerPanel *ui;
     FileModel *content;
-// QList<DiskButton *> diskButtons;
-// unsigned long diskMask = 0;
     ManagerPanelController *controller;
 
     void configureTable();
 
-private slots:
-// void slotDiskButtonClicked(const path &path);
+signals:
+    void currentPathChanged(path newPath);
+
+public slots:
+    void showHiddenFiles(bool checked = false);
 };
 
 #endif // MANAGERPANEL_H

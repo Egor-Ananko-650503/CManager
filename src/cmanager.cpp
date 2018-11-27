@@ -9,6 +9,7 @@ CManager::CManager(QWidget *parent) :
     ui->setupUi(this);
     configurePanel();
     runDiskListener();
+    connectSignals();
 }
 
 CManager::~CManager()
@@ -39,9 +40,27 @@ void CManager::runDiskListener()
     });
 }
 
+void CManager::connectSignals()
+{
+    connect(ui->actionHidden, &QAction::triggered,
+            leftPanel, &ManagerPanel::showHiddenFiles);
+    connect(ui->actionHidden, &QAction::triggered,
+            rightPanel, &ManagerPanel::showHiddenFiles);
+    connect(leftPanel, &ManagerPanel::currentPathChanged,
+            this, &CManager::slotChangeCurrentPath);
+    connect(rightPanel, &ManagerPanel::currentPathChanged,
+            this, &CManager::slotChangeCurrentPath);
+}
+
 void CManager::slotDiskMaskChanged(unsigned long disks)
 {
     qDebug() << disks; // DEBUG
     leftPanel->setDisks(disks);
     rightPanel->setDisks(disks);
+}
+
+void CManager::slotChangeCurrentPath(path newPath)
+{
+    ui->cmdPathLabel->setText(QString::fromStdWString(newPath.wstring()));
+    currentPath = newPath;
 }

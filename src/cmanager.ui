@@ -34,7 +34,7 @@
        </spacer>
       </item>
       <item>
-       <widget class="QLabel" name="cmdPatLabel">
+       <widget class="QLabel" name="cmdPathLabel">
         <property name="text">
          <string>cmd path</string>
         </property>
@@ -56,30 +56,31 @@
      <height>21</height>
     </rect>
    </property>
-   <widget class="QMenu" name="File">
+   <widget class="QMenu" name="file">
     <property name="title">
-     <string>Файл</string>
+     <string>&amp;Файл</string>
     </property>
    </widget>
-   <widget class="QMenu" name="Edit">
+   <widget class="QMenu" name="edit">
     <property name="title">
-     <string>Редактировать</string>
+     <string>&amp;Редактировать</string>
     </property>
    </widget>
-   <widget class="QMenu" name="View">
+   <widget class="QMenu" name="view">
     <property name="title">
-     <string>Вид</string>
+     <string>&amp;Вид</string>
+    </property>
+    <addaction name="actionHidden"/>
+   </widget>
+   <widget class="QMenu" name="halp">
+    <property name="title">
+     <string>&amp;Помощь</string>
     </property>
    </widget>
-   <widget class="QMenu" name="Halp">
-    <property name="title">
-     <string>Помощь</string>
-    </property>
-   </widget>
-   <addaction name="File"/>
-   <addaction name="Edit"/>
-   <addaction name="View"/>
-   <addaction name="Halp"/>
+   <addaction name="file"/>
+   <addaction name="edit"/>
+   <addaction name="view"/>
+   <addaction name="halp"/>
   </widget>
   <widget class="QToolBar" name="mainToolBar">
    <attribute name="toolBarArea">
@@ -90,6 +91,17 @@
    </attribute>
   </widget>
   <widget class="QStatusBar" name="statusBar"/>
+  <action name="actionHidden">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Показывать &amp;скрытые файлы</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+H</string>
+   </property>
+  </action>
  </widget>
  <layoutdefault spacing="6" margin="11"/>
  <resources/>

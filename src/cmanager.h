@@ -26,15 +26,18 @@ private:
     ManagerPanel *leftPanel;
     ManagerPanel *rightPanel;
     DiskListener *diskListener;
+    path currentPath;
 
     void configurePanel();
     void runDiskListener();
+    void connectSignals();
 
 signals:
+    void showHiddenFilesMode(bool checked = false);
 
 private slots:
-
     void slotDiskMaskChanged(unsigned long);
+    void slotChangeCurrentPath(path newPath);
 };
 
 #endif // CMANAGER_H

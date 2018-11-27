@@ -20,6 +20,12 @@ QVariant FileModel::data(const QModelIndex &index, int role) const
 {
     error_code ec;
 
+    if (role == Qt::TextAlignmentRole
+        && index.isValid()
+        && (index.column() == FILE_SIZE
+            || index.column() == FILE_DATE))
+        return Qt::AlignRight;
+
     if (!index.isValid()
         || files.count() <= index.row()
         || (role != Qt::DisplayRole && role != Qt::EditRole))
@@ -56,7 +62,7 @@ QVariant FileModel::data(const QModelIndex &index, int role) const
 
         uintmax_t fileSize = file_size(requiredPath, ec);
         if (ec.value() == errc::success)
-            return QString::number(fileSize);
+            return formatSizeByThousands(QString::number(fileSize));
 
         return "";
     }
@@ -95,10 +101,30 @@ QVariant FileModel::headerData(int section, Qt::Orientation orientation, int rol
     return QVariant();
 }
 
-void FileModel::reserModel(Files &newFiles)
+void FileModel::resetModel(Files &newFiles)
 {
     beginResetModel();
     files.clear();
     files = newFiles;
     endResetModel();
+}
+
+int FileModel::contentCount()
+{
+    return files.count();
+}
+
+path FileModel::getContent(int index)
+{
+    return files.at(index);
+}
+
+QString FileModel::formatSizeByThousands(QString original) const
+{
+    int countMissing = original.count() % 3;
+    return original.left(countMissing)
+           + " "
+           + original
+           .right(original.count() - countMissing)
+           .replace(QRegularExpression("(.{3})"), "\\1 ");
 }
