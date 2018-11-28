@@ -10,10 +10,18 @@ ManagerPanelController::ManagerPanelController(Ui::ManagerPanel *_ui, FileModel 
     content = _content;
 
     connectSignals();
+    initContexMenu();
+    initShortcuts();
 
 // setDisks(GetLogicalDrives());
 // if (!diskButtons.empty())
-// emit diskButtons.first()->resendingSignal();
+    // emit diskButtons.first()->resendingSignal();
+}
+
+ManagerPanelController::~ManagerPanelController()
+{
+    diskButtons.clear();
+    shortcutHash.clear();
 }
 
 void ManagerPanelController::setDisks(unsigned long disks)
@@ -69,20 +77,84 @@ Files ManagerPanelController::listDirectoryFiles(const path &dirPath, error_code
         && ec.value() == errc::success
         && is_directory(dirPath, ec)
         && ec.value() == errc::success) {
-        for (directory_entry &dEntry
-             : directory_iterator(dirPath))
-            if (!(FILE_ATTRIBUTE_HIDDEN & GetFileAttributesW(dEntry.path().c_str()))
-                || showHiddenFiles)
-                newFiles.push_back(dEntry.path());
+        directory_iterator dIterator(dirPath, ec);
+        if (ec.value() == errc::success) { // TODO Error dialog
+            for (directory_entry &dEntry
+                 : dIterator)
+                if (!(FILE_ATTRIBUTE_HIDDEN & GetFileAttributesW(dEntry.path().c_str()))
+                    || showHiddenFiles)
+                    newFiles.push_back(dEntry.path());
 
-        std::sort(newFiles.begin(), newFiles.end());
-    }
+            std::sort(newFiles.begin(), newFiles.end());
+        } // TODO Error dialog
+    } // TODO Error dialog
 
     return newFiles;
 }
 
 void ManagerPanelController::initView()
 {
+}
+
+void ManagerPanelController::initContexMenu()
+{
+}
+
+void ManagerPanelController::initShortcuts()
+{
+    QTableView *tableView = ui->fileTableView;
+
+    QShortcut *scCopy = new QShortcut(QKeySequence::Copy, tableView, nullptr,
+                                      nullptr, Qt::WidgetShortcut);
+    connect(scCopy, &QShortcut::activated,
+            this, &ManagerPanelController::slotCopy);
+
+    QShortcut *scCut = new QShortcut(QKeySequence::Cut, tableView, nullptr,
+                                     nullptr, Qt::WidgetShortcut);
+    connect(scCut, &QShortcut::activated,
+            this, &ManagerPanelController::slotCut);
+
+    QShortcut *scPaste = new QShortcut(QKeySequence::Paste, tableView, nullptr,
+                                       nullptr, Qt::WidgetShortcut);
+    connect(scPaste, &QShortcut::activated,
+            this, &ManagerPanelController::slotPaste);
+
+    shortcutHash.insert(QKeySequence::Copy, scCopy);
+    shortcutHash.insert(QKeySequence::Cut, scCut);
+    shortcutHash.insert(QKeySequence::Paste, scPaste);
+}
+
+void ManagerPanelController::processPath(path &_path)
+{
+    error_code ec;
+
+    // =============== REGULAR FILE ===============
+    if (is_regular_file(_path, ec) && ec.value() == errc::success) {
+        ShellExecuteW(nullptr, L"open", _path.wstring().c_str(),
+                      nullptr, nullptr, SW_SHOWNORMAL);
+        return;
+    } // TODO Error dialog
+
+    // =============== DIRECTORY JUNCTION ===============
+    if (IsDirectoryJunction(_path.wstring().c_str())) {
+        wchar_t dest[MAX_PATH + 1];
+        if (GetJunctionDestination(_path.wstring().c_str(), dest)) {
+            _path = path(dest);
+            processPath(_path);
+        }
+        return;
+    }
+
+    // =============== SYMLINK ===============
+// if (is_symlink(_path, ec) && ec.value() == errc::success) {
+// }
+
+    // =============== DIRECTORY ===============
+    if (is_directory(_path, ec) && ec.value() == errc::success) {
+        if (_path.filename_is_dot_dot()) _path = _path.parent_path().parent_path();
+        showDirectory(_path, ec);
+        return;
+    } // TODO Error dialog
 }
 
 void ManagerPanelController::showDirectory(const path &dirPath, error_code &ec)
@@ -114,6 +186,16 @@ void ManagerPanelController::changeCurrentPath(const path &newPath)
     emit currentPathChanged(newPath);
 }
 
+QString ManagerPanelController::formatSizeByThousands(QString original)
+{
+    int countMissing = original.count() % 3;
+    return original.left(countMissing)
+           + " "
+           + original
+           .right(original.count() - countMissing)
+           .replace(QRegularExpression("(.{3})"), "\\1 ");
+}
+
 // =============== SLOTS ===============
 
 void ManagerPanelController::slotDiskButtonClicked(const path &diskPath, const QString &diskLabel)
@@ -121,6 +203,17 @@ void ManagerPanelController::slotDiskButtonClicked(const path &diskPath, const Q
     qDebug() << "Disk button clicked on " << diskPath.wstring(); // DEBUG
 
     error_code ec;
+
+    if (currentPath.root_path().compare(diskPath.root_path())) {
+        for (auto &&disk
+             : diskButtons) {
+            if (!disk->diskPath.root_path()
+                .compare(currentPath.root_path())) {
+                disk->diskPath = currentPath;
+                break;
+            }
+        }
+    }
 
     if (currentPath.compare(diskPath)) {
         error_code ec;
@@ -130,18 +223,25 @@ void ManagerPanelController::slotDiskButtonClicked(const path &diskPath, const Q
                      << " Code: "
                      << ec.value();
             return;
-        }
+        } // TODO Error dialog
 
-        Files newFiles = listDirectoryFiles(diskPath, ec);
-
-        if (ec.value() != errc::success) return;
-
-        content->resetModel(newFiles);
-        content->sort(FILE_NAME);
-
-        changeCurrentPath(diskPath);
+        showDirectory(diskPath, ec);
 
         ui->diskLabel->setText(diskLabel);
+
+        ULARGE_INTEGER totalBytes,
+                       totalFreeBytes;
+        GetDiskFreeSpaceEx(diskPath.wstring().c_str(),
+                           nullptr,
+                           &totalBytes,
+                           &totalFreeBytes);
+        ui->diskFreeSpaceButton->setText(
+            formatSizeByThousands(QString::number(totalFreeBytes.QuadPart / 1024))
+            +" КиБ из "
+            +formatSizeByThousands(QString::number(totalBytes.QuadPart / 1024))
+            +" КиБ свободно");
+    } else {
+        slotRootPathButtonClicked();
     }
 }
 
@@ -151,22 +251,9 @@ void ManagerPanelController::slotTableViewDBClick(const QModelIndex &index)
         || index.row() > content->contentCount())
         return;
 
-    error_code ec;
     path newPath = content->getContent(index.row());
 
-    // =============== REGULAR FILE ===============
-    if (is_regular_file(newPath)) {
-    }
-
-    // =============== DIRECTORY JUNCTION ===============
-    if (IsDirectoryJunction(newPath.wstring().c_str())) {
-    }
-
-    // =============== DIRECTORY ===============
-    if (is_directory(newPath, ec) && ec.value() == errc::success) {
-        if (newPath.filename_is_dot_dot()) newPath = newPath.parent_path().parent_path();
-        showDirectory(newPath, ec);
-    }
+    processPath(newPath);
 }
 
 void ManagerPanelController::slotRootPathButtonClicked()
@@ -175,4 +262,37 @@ void ManagerPanelController::slotRootPathButtonClicked()
     error_code ec;
     showDirectory(currentPath, ec);
     changeCurrentPath(currentPath);
+}
+
+void ManagerPanelController::slotCopy()
+{
+    qDebug() << "Ctrl+C";
+}
+
+void ManagerPanelController::slotCut()
+{
+    qDebug() << "Ctrl+X";
+}
+
+void ManagerPanelController::slotPaste()
+{
+    qDebug() << "Ctrl+V";
+}
+
+void ManagerPanelController::slotRename()
+{
+    qDebug() << "F2";
+}
+
+void ManagerPanelController::slotDelete()
+{
+    qDebug() << "Delete";
+}
+
+void ManagerPanelController::slotEncrypt()
+{
+}
+
+void ManagerPanelController::slotDecrypt()
+{
 }

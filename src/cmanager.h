@@ -38,6 +38,7 @@ signals:
 private slots:
     void slotDiskMaskChanged(unsigned long);
     void slotChangeCurrentPath(path newPath);
+    void slotCmdPressed();
 };
 
 #endif // CMANAGER_H

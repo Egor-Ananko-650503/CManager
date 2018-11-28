@@ -7,6 +7,8 @@
 
 #pragma once
 
+#include <windows.h>
+
 #define SYMLINK_FLAG_RELATIVE 1
 #define REPARSE_DATA_BUFFER_HEADER_SIZE offsetof(REPARSE_DATA_BUFFER, GenericReparseBuffer)
 

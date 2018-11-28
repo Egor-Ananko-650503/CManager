@@ -55,7 +55,8 @@ HEADERS += \
     filemodel.h \
     junctionpoint.h \
     internal.h \
-    managerpanelcontroller.h
+    managerpanelcontroller.h \
+    operationstructure.h
 
 FORMS += \
         cmanager.ui \

@@ -14,6 +14,8 @@
 #include <QString>
 #include <pathcch.h>
 
+#include <QDebug>
+
 using namespace std;
 
 namespace neosmart {

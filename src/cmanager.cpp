@@ -46,10 +46,14 @@ void CManager::connectSignals()
             leftPanel, &ManagerPanel::showHiddenFiles);
     connect(ui->actionHidden, &QAction::triggered,
             rightPanel, &ManagerPanel::showHiddenFiles);
+
     connect(leftPanel, &ManagerPanel::currentPathChanged,
             this, &CManager::slotChangeCurrentPath);
     connect(rightPanel, &ManagerPanel::currentPathChanged,
             this, &CManager::slotChangeCurrentPath);
+
+    connect(ui->cmdComandLineEdit, &QLineEdit::returnPressed,
+            this, &CManager::slotCmdPressed);
 }
 
 void CManager::slotDiskMaskChanged(unsigned long disks)
@@ -63,4 +67,13 @@ void CManager::slotChangeCurrentPath(path newPath)
 {
     ui->cmdPathLabel->setText(QString::fromStdWString(newPath.wstring()));
     currentPath = newPath;
+}
+
+void CManager::slotCmdPressed()
+{
+    std::wstring command(("/c \"" + ui->cmdComandLineEdit->text() + "\"").toStdWString());
+    ShellExecuteW(nullptr, L"open", L"cmd.exe",
+                  command.c_str(), currentPath.wstring().c_str(),
+                  SW_SHOWNORMAL);
+    qDebug() << command;                                  // DEBUG
 }
