@@ -27,6 +27,7 @@ private:
     ManagerPanel *rightPanel;
     DiskListener *diskListener;
     path currentPath;
+    PFileOperation fileOperation;
 
     void configurePanel();
     void runDiskListener();

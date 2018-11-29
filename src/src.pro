@@ -45,7 +45,8 @@ SOURCES += \
     managerpanel.cpp \
     filemodel.cpp \
     junctionpoint.cpp \
-    managerpanelcontroller.cpp
+    managerpanelcontroller.cpp \
+    fileoperationmanager.cpp
 
 HEADERS += \
         cmanager.h \
@@ -56,7 +57,8 @@ HEADERS += \
     junctionpoint.h \
     internal.h \
     managerpanelcontroller.h \
-    operationstructure.h
+    operationstructure.h \
+    fileoperationmanager.h
 
 FORMS += \
         cmanager.ui \

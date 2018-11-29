@@ -6,9 +6,12 @@
 #include <QHash>
 
 #include "boost/filesystem.hpp"
+
 #include "filemodel.h"
 #include "diskbutton.h"
 #include "junctionpoint.h"
+#include "operationstructure.h"
+#include "fileoperationmanager.h"
 
 using namespace boost::filesystem;
 using namespace neosmart;
@@ -22,7 +25,7 @@ class ManagerPanelController : public QObject
     Q_OBJECT
 public:
     explicit ManagerPanelController(Ui::ManagerPanel *_ui, FileModel *_content,
-                                    QObject *parent = nullptr);
+                                    PFileOperation _fileOperation, QObject *parent = nullptr);
     ~ManagerPanelController();
 
     void setDisks(unsigned long disks);
@@ -38,6 +41,8 @@ private:
     path currentPath;
     bool showHiddenFiles = false;
     QHash<QKeySequence, QShortcut *> shortcutHash;
+    PFileOperation fileOperation;
+    FileOperationManager *fileOperationManager;
 
     void initView();
     void initContexMenu();
@@ -64,6 +69,8 @@ private slots:
     void slotDelete();
     void slotEncrypt();
     void slotDecrypt();
+
+    void slotTest(QString message);
 };
 
 #endif // MANAGERPANELCONTROLLER_H

@@ -11,6 +11,7 @@
 #include "diskbutton.h"
 #include "filemodel.h"
 #include "managerpanelcontroller.h"
+#include "operationstructure.h"
 
 namespace Ui {
 class ManagerPanel;
@@ -21,7 +22,7 @@ class ManagerPanel : public QWidget
     Q_OBJECT
 
 public:
-    explicit ManagerPanel(QWidget *parent = nullptr);
+    explicit ManagerPanel(PFileOperation _fileOperation, QWidget *parent = nullptr);
     ~ManagerPanel();
 
     void setDisks(unsigned long disks);
@@ -30,6 +31,7 @@ private:
     Ui::ManagerPanel *ui;
     FileModel *content;
     ManagerPanelController *controller;
+    PFileOperation fileOperation;
 
     void configureTable();
 

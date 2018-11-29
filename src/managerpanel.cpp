@@ -1,7 +1,7 @@
 #include "managerpanel.h"
 #include "ui_managerpanel.h"
 
-ManagerPanel::ManagerPanel(QWidget *parent) :
+ManagerPanel::ManagerPanel(PFileOperation _fileOperation, QWidget *parent) :
     QWidget(parent),
     ui(new Ui::ManagerPanel)
 {
@@ -11,10 +11,9 @@ ManagerPanel::ManagerPanel(QWidget *parent) :
     ui->rootPathButton->setMaximumSize(QSize(30, 30));
     ui->historyComdoBox->setMaximumSize(QSize(30, 30));
 
-    controller = new ManagerPanelController(
-        ui,
-        content);
+    fileOperation = _fileOperation;
 
+    controller = new ManagerPanelController(ui, content, fileOperation);
     connect(controller, &ManagerPanelController::currentPathChanged,
             this, &ManagerPanel::currentPathChanged);
 }

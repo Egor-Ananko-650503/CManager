@@ -3,15 +3,19 @@
 #include "ui_managerpanel.h"
 
 ManagerPanelController::ManagerPanelController(Ui::ManagerPanel *_ui, FileModel *_content,
-                                               QObject *parent) :
+                                               PFileOperation _fileOperation, QObject *parent) :
     QObject(parent)
 {
     ui = _ui;
     content = _content;
+    fileOperation = _fileOperation;
 
     connectSignals();
-    initContexMenu();
+// initView();
+// initContexMenu();
     initShortcuts();
+
+    fileOperationManager = new FileOperationManager;
 
 // setDisks(GetLogicalDrives());
 // if (!diskButtons.empty())
@@ -22,6 +26,8 @@ ManagerPanelController::~ManagerPanelController()
 {
     diskButtons.clear();
     shortcutHash.clear();
+    fileOperationManager->waitAll();
+    delete fileOperationManager;
 }
 
 void ManagerPanelController::setDisks(unsigned long disks)
@@ -119,9 +125,15 @@ void ManagerPanelController::initShortcuts()
     connect(scPaste, &QShortcut::activated,
             this, &ManagerPanelController::slotPaste);
 
+    QShortcut *scRename = new QShortcut(QKeySequence(Qt::Key_F2), tableView, nullptr,
+                                        nullptr, Qt::WidgetShortcut);
+    connect(scRename, &QShortcut::activated,
+            this, &ManagerPanelController::slotRename);
+
     shortcutHash.insert(QKeySequence::Copy, scCopy);
     shortcutHash.insert(QKeySequence::Cut, scCut);
     shortcutHash.insert(QKeySequence::Paste, scPaste);
+    shortcutHash.insert(QKeySequence(Qt::Key_F2), scRename);
 }
 
 void ManagerPanelController::processPath(path &_path)
@@ -267,16 +279,46 @@ void ManagerPanelController::slotRootPathButtonClicked()
 void ManagerPanelController::slotCopy()
 {
     qDebug() << "Ctrl+C";
+    QTableView *tableView = ui->fileTableView;
+    QModelIndex index = tableView->selectionModel()->currentIndex();
+    int row = index.row();
+    if (index.isValid()
+        && row < content->contentCount()
+        && row >= 0
+        && !content->getContent(row).filename_is_dot_dot()) {
+        fileOperation->sourcePath = content->getContent(row);
+        fileOperation->operation = COPY;
+    }
+    qDebug() << fileOperation->operation << " " << fileOperation->sourcePath.wstring();
 }
 
 void ManagerPanelController::slotCut()
 {
     qDebug() << "Ctrl+X";
+    QTableView *tableView = ui->fileTableView;
+    QModelIndex index = tableView->selectionModel()->currentIndex();
+    int row = index.row();
+    path srcPath;
+    if (index.isValid()
+        && row < content->contentCount()
+        && row >= 0
+        && !content->getContent(row).filename_is_dot_dot()) {
+        fileOperation->sourcePath = content->getContent(row);
+        fileOperation->operation = CUT;
+    }
+    qDebug() << fileOperation->operation << " " << fileOperation->sourcePath.wstring();
 }
 
 void ManagerPanelController::slotPaste()
 {
     qDebug() << "Ctrl+V";
+    if (fileOperation->isValid()) {
+        if (fileOperation->operation == COPY) {
+            fileOperationManager->copy(fileOperation->sourcePath, currentPath);
+            connect(fileOperationManager, &FileOperationManager::operationSuccess,
+                    this, &ManagerPanelController::slotTest);
+        }
+    }
 }
 
 void ManagerPanelController::slotRename()
@@ -295,4 +337,9 @@ void ManagerPanelController::slotEncrypt()
 
 void ManagerPanelController::slotDecrypt()
 {
+}
+
+void ManagerPanelController::slotTest(QString message)
+{
+    qDebug() << this << message;
 }

@@ -10,6 +10,8 @@ CManager::CManager(QWidget *parent) :
     configurePanel();
     runDiskListener();
     connectSignals();
+
+    fileOperation = new FileOperation();
 }
 
 CManager::~CManager()
@@ -22,8 +24,8 @@ CManager::~CManager()
 
 void CManager::configurePanel()
 {
-    this->leftPanel = new ManagerPanel(this);
-    this->rightPanel = new ManagerPanel(this);
+    this->leftPanel = new ManagerPanel(fileOperation, this);
+    this->rightPanel = new ManagerPanel(fileOperation, this);
 
     ui->CMPanelHBox->addWidget(this->leftPanel);
     ui->CMPanelHBox->addWidget(this->rightPanel);
@@ -35,7 +37,7 @@ void CManager::runDiskListener()
     connect(diskListener, &DiskListener::diskMaskChanged,
             this, &CManager::slotDiskMaskChanged);
 
-    QtConcurrent::run([=](){
+    QtConcurrent::run([this](){
         diskListener->listenDiskMask();
     });
 }
