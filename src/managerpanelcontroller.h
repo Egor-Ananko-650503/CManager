@@ -70,7 +70,14 @@ private slots:
     void slotEncrypt();
     void slotDecrypt();
 
-    void slotTest(QString message);
+    void slotDeleteSuccess(QString message);
+    void slotDeleteFail(error_code ec, QString message);
+    void slotCopySuccess(QString message);
+    void slotCopyFail(error_code ec, QString message);
+    void slotCutSuccess(QString message);
+    void slotCutFail(error_code ec, QString message);
+    void slotEncryptMessage(QString message);
+    void slotDecryptMessage(QString message);
 };
 
 #endif // MANAGERPANELCONTROLLER_H
