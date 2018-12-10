@@ -22,9 +22,9 @@ public:
 
 private slots:
     void initTestCase();
-    void test_getContent();
-    void test_contentCount();
-    void test_formatSizeByThousands();
+    void test_FileModel_getContent();
+    void test_FileModel_contentCount();
+    void test_FileModel_formatSizeByThousands();
     void cleanupTestCase();
 };
 
@@ -41,13 +41,13 @@ void logic_tests::initTestCase()
     model.resetModel(nonEmptyList);
 }
 
-void logic_tests::test_getContent()
+void logic_tests::test_FileModel_getContent()
 {
     for (int i = 0; i < nonEmptyList.count(); ++i)
         QCOMPARE(model.getContent(i).wstring(), nonEmptyList.at(i).wstring());
 }
 
-void logic_tests::test_contentCount()
+void logic_tests::test_FileModel_contentCount()
 {
     QCOMPARE(model.contentCount(), nonEmptyList.count());
     model.resetModel(emptyList);
@@ -55,7 +55,7 @@ void logic_tests::test_contentCount()
     model.resetModel(nonEmptyList);
 }
 
-void logic_tests::test_formatSizeByThousands()
+void logic_tests::test_FileModel_formatSizeByThousands()
 {
     QCOMPARE(model.formatSizeByThousands("12345678"), "12 345 678");
     QCOMPARE(model.formatSizeByThousands("1234"), "1 234");
