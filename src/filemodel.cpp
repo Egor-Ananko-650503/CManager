@@ -122,9 +122,10 @@ path FileModel::getContent(int index)
 QString FileModel::formatSizeByThousands(QString original) const
 {
     int countMissing = original.count() % 3;
-    return original.left(countMissing)
-           + " "
-           + original
-           .right(original.count() - countMissing)
-           .replace(QRegularExpression("(.{3})"), "\\1 ");
+    QString result = original.left(countMissing)
+                     + original
+                     .right(original.count() - countMissing)
+                     .replace(QRegularExpression("(.{3})"), " \\1");
+
+    return result[0] == ' ' ? result.right(result.count() - 1) : result;
 }

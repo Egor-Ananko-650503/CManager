@@ -29,13 +29,13 @@ class FileModel : public QAbstractTableModel
 {
     Q_OBJECT
 public:
-    FileModel(QObject *parent = nullptr);
+    explicit FileModel(QObject *parent = nullptr);
 
     int rowCount(const QModelIndex &parent) const;
     int columnCount(const QModelIndex &parent) const;
     QVariant data(const QModelIndex &index, int role) const;
     QVariant headerData(int section, Qt::Orientation orientation, int role) const;
-    void resetModel(Files &files);
+    void resetModel(Files &newFiles);
 
     int contentCount();
     path getContent(int index);
