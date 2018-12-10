@@ -1,32 +1,33 @@
 #include "diskbutton.h"
 
-DiskButton::DiskButton(const path &path, QWidget *parent) : QPushButton(parent)
+DiskButton::DiskButton(const path &path, QWidget *parent) :
+    QPushButton(parent),
+    diskPath(path)
 {
-    this->diskPath = path;
     connect(this, SIGNAL(clicked()),
             this, SLOT(resendingSignal()));
 }
 
 DiskButton::DiskButton(const path &path, const QString &text, QWidget *parent) :
-    QPushButton(text, parent)
+    QPushButton(text, parent),
+    diskPath(path)
 {
-    this->diskPath = path;
     connect(this, SIGNAL(clicked()),
             this, SLOT(resendingSignal()));
 }
 
 DiskButton::DiskButton(const path &path, const QIcon &icon, const QString &text, QWidget *parent) :
-    QPushButton(icon, text, parent)
+    QPushButton(icon, text, parent),
+    diskPath(path)
 {
-    this->diskPath = path;
     connect(this, SIGNAL(clicked()),
             this, SLOT(resendingSignal()));
 }
 
 DiskButton::DiskButton(const path &path, QPushButtonPrivate &dd, QWidget *parent) :
-    QPushButton(dd, parent)
+    QPushButton(dd, parent),
+    diskPath(path)
 {
-    this->diskPath = path;
     connect(this, SIGNAL(clicked()),
             this, SLOT(resendingSignal()));
 }

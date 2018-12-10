@@ -22,6 +22,7 @@ ManagerPanel::~ManagerPanel()
 {
     delete ui;
     delete content;
+
     delete controller;
 }
 
