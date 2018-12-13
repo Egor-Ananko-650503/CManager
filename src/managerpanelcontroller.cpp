@@ -1,5 +1,4 @@
 #include "managerpanelcontroller.h"
-#include "managerpanelcontroller.h"
 #include "ui_managerpanel.h"
 
 ManagerPanelController::ManagerPanelController(Ui::ManagerPanel *_ui, FileModel *_content,
@@ -9,13 +8,12 @@ ManagerPanelController::ManagerPanelController(Ui::ManagerPanel *_ui, FileModel 
     ui = _ui;
     content = _content;
     fileOperation = _fileOperation;
+    fileOperationManager = new FileOperationManager;
 
     connectSignals();
+    initShortcuts();
 // initView();
 // initContexMenu();
-    initShortcuts();
-
-    fileOperationManager = new FileOperationManager;
 
 // setDisks(GetLogicalDrives());
 // if (!diskButtons.empty())
@@ -26,7 +24,11 @@ ManagerPanelController::ManagerPanelController(Ui::ManagerPanel *_ui, FileModel 
 
 ManagerPanelController::~ManagerPanelController()
 {
+    foreach (auto &elem, diskButtons)
+        delete elem;
     diskButtons.clear();
+    foreach (auto &elem, shortcutHash)
+        delete elem;
     shortcutHash.clear();
     fileOperationManager->waitAll();
     delete fileOperationManager;
@@ -207,6 +209,27 @@ void ManagerPanelController::connectSignals()
             this, &ManagerPanelController::slotTableViewDBClick);
     connect(ui->rootPathButton, &QPushButton::clicked,
             this, &ManagerPanelController::slotRootPathButtonClicked);
+
+    connect(fileOperationManager, &FileOperationManager::copySuccess,
+            this, &ManagerPanelController::slotCopySuccess);
+    connect(fileOperationManager, &FileOperationManager::copyFail,
+            this, &ManagerPanelController::slotCopyFail);
+    connect(fileOperationManager, &FileOperationManager::cutSuccess,
+            this, &ManagerPanelController::slotCutSuccess);
+    connect(fileOperationManager, &FileOperationManager::cutFail,
+            this, &ManagerPanelController::slotCutFail);
+    connect(fileOperationManager, &FileOperationManager::deleteSuccess,
+            this, &ManagerPanelController::slotDeleteSuccess);
+    connect(fileOperationManager, &FileOperationManager::deleteFail,
+            this, &ManagerPanelController::slotDeleteFail);
+    connect(fileOperationManager, &FileOperationManager::encryptSuccess,
+            this, &ManagerPanelController::slotEncryptSuccess);
+    connect(fileOperationManager, &FileOperationManager::encryptFail,
+            this, &ManagerPanelController::slotEncryptFail);
+    connect(fileOperationManager, &FileOperationManager::decryptSuccess,
+            this, &ManagerPanelController::slotDecryptSuccess);
+    connect(fileOperationManager, &FileOperationManager::decryptFail,
+            this, &ManagerPanelController::slotDecryptFail);
 }
 
 void ManagerPanelController::changeCurrentPath(const path &newPath)
@@ -227,6 +250,16 @@ QString ManagerPanelController::formatSizeByThousands(QString original)
            .replace(QRegularExpression("(.{3})"), "\\1 ");
 }
 
+void ManagerPanelController::showSuccessfullMessage(QString message)
+{
+    QMessageBox::information(nullptr, "Success", message);
+}
+
+void ManagerPanelController::showFailMessage(QString message)
+{
+    QMessageBox::critical(nullptr, "Fail", message);
+}
+
 // =============== SLOTS ===============
 
 void ManagerPanelController::slotDiskButtonClicked(const path &diskPath, const QString &diskLabel)
@@ -235,28 +268,29 @@ void ManagerPanelController::slotDiskButtonClicked(const path &diskPath, const Q
 
     error_code ec;
 
-    if (currentPath.root_path().compare(diskPath.root_path())) {
-        for (auto &&disk
-             : diskButtons) {
-            if (!disk->diskPath.root_path()
-                .compare(currentPath.root_path())) {
-                disk->diskPath = currentPath;
-                break;
+    if (currentPath.compare(diskPath)) {
+        if (currentPath.root_path().compare(diskPath.root_path())) {
+            for (auto &&disk
+                 : diskButtons) {
+                if (!disk->diskPath.root_path()
+                    .compare(currentPath.root_path())
+                    ) {
+                    disk->diskPath = currentPath;
+                    break;
+                }
             }
         }
-    }
 
-    if (currentPath.compare(diskPath)) {
-        error_code ec;
-        if (!exists(diskPath, ec) || ec.value() != errc::success) {
+        error_code _ec;
+        if (!exists(diskPath, _ec) || _ec.value() != errc::success) {
             qDebug() << "Message: "
-                     << QString::fromLocal8Bit(ec.message().c_str())
+                     << QString::fromLocal8Bit(_ec.message().c_str())
                      << " Code: "
-                     << ec.value();
+                     << _ec.value();
             return;
         } // TODO Error dialog
 
-        showDirectory(diskPath, ec);
+        showDirectory(diskPath, _ec);
 
         ui->diskLabel->setText(diskLabel);
 
@@ -297,52 +331,56 @@ void ManagerPanelController::slotRootPathButtonClicked()
 
 void ManagerPanelController::slotCopy()
 {
-    qDebug() << "Ctrl+C";
-    QTableView *tableView = ui->fileTableView;
-    QModelIndex index = tableView->selectionModel()->currentIndex();
-    int row = index.row();
-    if (index.isValid()
-        && row < content->contentCount()
-        && row >= 0
-        && !content->getContent(row).filename_is_dot_dot()
-        ) {
-        fileOperation->sourcePath = content->getContent(row);
-        fileOperation->operation = COPY;
+    try {
+        qDebug() << "Ctrl+C";
+        QTableView *tableView = ui->fileTableView;
+        QModelIndex index = tableView->selectionModel()->currentIndex();
+        if (index.isValid()
+            && index.row() < content->contentCount()
+            && index.row() >= 0
+            && !content->getContent(index.row()).filename_is_dot_dot()
+            ) {
+            fileOperation->sourcePath = content->getContent(index.row());
+            fileOperation->operation = COPY;
+        }
+        qDebug() << fileOperation->operation << " " << fileOperation->sourcePath.wstring();
+    } catch (...) {
+        qDebug() << "Exception Ctrl+C";
     }
-    qDebug() << fileOperation->operation << " " << fileOperation->sourcePath.wstring();
 }
 
 void ManagerPanelController::slotCut()
 {
-    qDebug() << "Ctrl+X";
-    QTableView *tableView = ui->fileTableView;
-    QModelIndex index = tableView->selectionModel()->currentIndex();
-    int row = index.row();
-    if (index.isValid()
-        && row < content->contentCount()
-        && row >= 0
-        && !content->getContent(row).filename_is_dot_dot()
-        ) {
-        fileOperation->sourcePath = content->getContent(row);
-        fileOperation->operation = CUT;
+    try {
+        qDebug() << "Ctrl+X";
+        QTableView *tableView = ui->fileTableView;
+        QModelIndex index = tableView->selectionModel()->currentIndex();
+        if (index.isValid()
+            && index.row() < content->contentCount()
+            && index.row() >= 0
+            && !content->getContent(index.row()).filename_is_dot_dot()
+            ) {
+            fileOperation->sourcePath = content->getContent(index.row());
+            fileOperation->operation = CUT;
+        }
+        qDebug() << fileOperation->operation << " " << fileOperation->sourcePath.wstring();
+    } catch (...) {
+        qDebug() << "Exception Ctrl+X";
     }
-    qDebug() << fileOperation->operation << " " << fileOperation->sourcePath.wstring();
 }
 
 void ManagerPanelController::slotPaste()
 {
-    qDebug() << "Ctrl+V";
-    if (fileOperation->isValid()) {
-        if (fileOperation->operation == COPY) {
-            fileOperationManager->copy(fileOperation->sourcePath, currentPath);
-            connect(fileOperationManager, &FileOperationManager::operationSuccess,
-                    this, &ManagerPanelController::slotCopySuccess);
+    try {
+        qDebug() << "Ctrl+V";
+        if (fileOperation->isValid()) {
+            if (fileOperation->operation == COPY)
+                fileOperationManager->copy(fileOperation->sourcePath, currentPath);
+            if (fileOperation->operation == CUT)
+                fileOperationManager->cut(fileOperation->sourcePath, currentPath);
         }
-        if (fileOperation->operation == CUT) {
-            fileOperationManager->cut(fileOperation->sourcePath, currentPath);
-            connect(fileOperationManager, &FileOperationManager::cutSuccess,
-                    this, &ManagerPanelController::slotCutSuccess);
-        }
+    } catch (...) {
+        qDebug() << "Exception Ctrl+V";
     }
 }
 
@@ -353,19 +391,18 @@ void ManagerPanelController::slotRename()
 
 void ManagerPanelController::slotDelete()
 {
-    qDebug() << "Delete";
-    QTableView *tableView = ui->fileTableView;
-    QModelIndex index = tableView->selectionModel()->currentIndex();
-    if (index.isValid()
-        && index.row() < content->contentCount()
-        && index.row() >= 0
-        && !content->getContent(index.row()).filename_is_dot_dot()
-        ) {
-        fileOperationManager->remove(content->getContent(index.row()));
-        connect(fileOperationManager, &FileOperationManager::deleteSuccess,
-                this, &ManagerPanelController::slotDeleteSuccess);
-        connect(fileOperationManager, &FileOperationManager::deleteFail,
-                this, &ManagerPanelController::slotDeleteFail);
+    try {
+        qDebug() << "Delete";
+        QTableView *tableView = ui->fileTableView;
+        QModelIndex index = tableView->selectionModel()->currentIndex();
+        if (index.isValid()
+            && index.row() < content->contentCount()
+            && index.row() >= 0
+            && !content->getContent(index.row()).filename_is_dot_dot()
+            )
+            fileOperationManager->remove(content->getContent(index.row()));
+    } catch (...) {
+        qDebug() << "Exception Delete";
     }
 }
 
@@ -377,13 +414,8 @@ void ManagerPanelController::slotEncrypt()
         && index.row() < content->contentCount()
         && index.row() >= 0
         && !content->getContent(index.row()).filename_is_dot_dot()
-        ) {
+        )
         fileOperationManager->encrypt(content->getContent(index.row()));
-        connect(fileOperationManager, &FileOperationManager::encryptSuccess,
-                this, &ManagerPanelController::slotEncryptMessage);
-        connect(fileOperationManager, &FileOperationManager::encryptFail,
-                this, &ManagerPanelController::slotEncryptMessage);
-    }
 }
 
 void ManagerPanelController::slotDecrypt()
@@ -394,61 +426,99 @@ void ManagerPanelController::slotDecrypt()
         && index.row() < content->contentCount()
         && index.row() >= 0
         && !content->getContent(index.row()).filename_is_dot_dot()
-        ) {
+        )
         fileOperationManager->decrypt(content->getContent(index.row()));
-        connect(fileOperationManager, &FileOperationManager::decryptSuccess,
-                this, &ManagerPanelController::slotDecryptMessage);
-        connect(fileOperationManager, &FileOperationManager::decryptFail,
-                this, &ManagerPanelController::slotDecryptMessage);
-    }
 }
 
 void ManagerPanelController::slotDeleteSuccess(QString message)
 {
-    qDebug() << this << "Delete success";
-    qDebug() << "Message: " << message;
+// qDebug() << this << " >> Delete success";
+// qDebug() << "Message: " << message << endl;
+    showSuccessfullMessage(message);
     error_code ec;
     showDirectory(currentPath, ec);
 }
 
 void ManagerPanelController::slotDeleteFail(error_code ec, QString message)
 {
-    qDebug() << this << "Delete fail";
+// qDebug() << this << " >> Delete fail";
     QString info("Value: ");
     info += QString::number(ec.value());
     info += " Message: ";
     info += QString::fromLocal8Bit(
         ec.message().c_str());
 
-    qDebug() << "Info: " << info;
-    qDebug() << "Message: " << message;
-    error_code _ec;
-    showDirectory(currentPath, _ec);
+// qDebug() << "Info: " << info;
+// qDebug() << "Message: " << message << endl;
+    showFailMessage(info + '\n' + message);
 }
 
 void ManagerPanelController::slotCopySuccess(QString message)
 {
-    qDebug() << message;
+// qDebug() << this << " >> Copy success";
+// qDebug() << "Message: " << message << endl;
+    showSuccessfullMessage(message);
+    error_code ec;
+    showDirectory(currentPath, ec);
 }
 
 void ManagerPanelController::slotCopyFail(error_code ec, QString message)
 {
+// qDebug() << this << " >> Copy fail";
+    QString info("Value: ");
+    info += QString::number(ec.value());
+    info += " Message: ";
+    info += QString::fromLocal8Bit(
+        ec.message().c_str());
+
+// qDebug() << "Info: " << info;
+// qDebug() << "Message: " << message << endl;
+    showFailMessage(info + '\n' + message);
 }
 
 void ManagerPanelController::slotCutSuccess(QString message)
 {
+// qDebug() << this << "Cut success";
+// qDebug() << "Message: " << message << endl;
+    showSuccessfullMessage(message);
+    error_code ec;
+    showDirectory(currentPath, ec);
 }
 
 void ManagerPanelController::slotCutFail(error_code ec, QString message)
 {
+// qDebug() << this << " >> Cut fail";
+    QString info("Value: ");
+    info += QString::number(ec.value());
+    info += " Message: ";
+    info += QString::fromLocal8Bit(
+        ec.message().c_str());
+
+// qDebug() << "Info: " << info;
+// qDebug() << "Message: " << message << endl;
+    showFailMessage(info + '\n' + message);
 }
 
-void ManagerPanelController::slotEncryptMessage(QString message)
+void ManagerPanelController::slotEncryptSuccess(QString message)
 {
-    qDebug() << message;
+// qDebug() << this << " >> Encrypt (success\\fail)";
+// qDebug() << message << endl;
+    showSuccessfullMessage(message);
 }
 
-void ManagerPanelController::slotDecryptMessage(QString message)
+void ManagerPanelController::slotEncryptFail(QString message)
 {
-    qDebug() << message;
+    showFailMessage(message);
+}
+
+void ManagerPanelController::slotDecryptSuccess(QString message)
+{
+// qDebug() << this << " >> Decrypt (success\\fail)";
+// qDebug() << message << endl;
+    showSuccessfullMessage(message);
+}
+
+void ManagerPanelController::slotDecryptFail(QString message)
+{
+    showFailMessage(message);
 }

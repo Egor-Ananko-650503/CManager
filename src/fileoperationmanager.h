@@ -4,6 +4,7 @@
 #include <QObject>
 #include <QtConcurrent/QtConcurrentRun>
 #include <QFuture>
+#include <QFutureWatcher>
 #include <QMessageBox>
 
 #include "boost/filesystem.hpp"
@@ -17,14 +18,19 @@ using namespace neosmart;
 class FileOperationManager : public QObject
 {
     Q_OBJECT
+
+    template<class T>
+    void addFuture(QFuture<T> future);
+
 public:
     explicit FileOperationManager(QObject *parent = nullptr);
 
     QList<QFuture<void> > threads;
+    QList<QFutureWatcher<void> *> watchers;
 
     bool recursiveCopy(const path &source, const path &receiver, error_code &ec);
     void copy(const path &source, const path &receiver);
-    bool removeProcessing(const path &source);
+    bool removeProcessing(const path &source, error_code &ec);
     void remove(const path &source);
     void cut(const path &source, const path &receiver);
     void encrypt(const path &source);
@@ -46,6 +52,7 @@ signals:
     void encryptFail(QString message);
 
 public slots:
+    void futureFinished();
 };
 
 #endif // FILEOPERATIONMANAGER_H

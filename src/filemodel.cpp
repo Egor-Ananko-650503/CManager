@@ -116,7 +116,7 @@ int FileModel::contentCount()
 
 path FileModel::getContent(int index)
 {
-    return files.at(index);
+    return files[index];
 }
 
 QString FileModel::formatSizeByThousands(QString original) const

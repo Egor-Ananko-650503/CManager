@@ -4,6 +4,8 @@
 #include <QObject>
 #include <QShortcut>
 #include <QHash>
+#include <QDebug>
+#include <QMessageBox>
 
 #include "boost/filesystem.hpp"
 
@@ -52,8 +54,10 @@ private:
     Files listDirectoryFiles(const path &dirPath, error_code &ec);
     void processPath(path &_path);
     void showDirectory(const path &dirPath, error_code &ec);
-    void changeCurrentPath(const path &diskPath);
+    void changeCurrentPath(const path &newPath);
     QString formatSizeByThousands(QString original);
+    void showSuccessfullMessage(QString message);
+    void showFailMessage(QString message);
 
 signals:
     void currentPathChanged(path newPath);
@@ -76,8 +80,10 @@ private slots:
     void slotCopyFail(error_code ec, QString message);
     void slotCutSuccess(QString message);
     void slotCutFail(error_code ec, QString message);
-    void slotEncryptMessage(QString message);
-    void slotDecryptMessage(QString message);
+    void slotEncryptSuccess(QString message);
+    void slotEncryptFail(QString message);
+    void slotDecryptSuccess(QString message);
+    void slotDecryptFail(QString message);
 };
 
 #endif // MANAGERPANELCONTROLLER_H

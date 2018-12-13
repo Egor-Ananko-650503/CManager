@@ -60,7 +60,7 @@ void CManager::connectSignals()
 
 void CManager::slotDiskMaskChanged(unsigned long disks)
 {
-    qDebug() << disks; // DEBUG
+    //qDebug()() << disks; // DEBUG
     leftPanel->setDisks(disks);
     rightPanel->setDisks(disks);
 }
@@ -77,5 +77,5 @@ void CManager::slotCmdPressed()
     ShellExecuteW(nullptr, L"open", L"cmd.exe",
                   command.c_str(), currentPath.wstring().c_str(),
                   SW_SHOWNORMAL);
-    qDebug() << command;                                  // DEBUG
+    //qDebug()() << command;                                  // DEBUG
 }
